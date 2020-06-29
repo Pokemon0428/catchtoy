@@ -676,15 +676,78 @@
             mark5: true,
         }
         var mql = window.matchMedia("(orientation: portrait)")
+        function getClientInfo() {
+            var u = navigator.userAgent;
+            var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+            var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+            var isPad = u.match(/(iPad).*OS\s([\d_]+)/i)  //平板
+            if (isAndroid) {
+                return "Android";
+            } else if (isiOS) {
+                return "iOS"
+            } else if (isPad){
+                return "Pad";
+            } else {
+                return "PC"
+            }
+        }
+        var catchPosition = {
+            p1: {},
+            p2: {},
+            p3: {},
+            p4: {},
+            p5: {}
+        }
+        function catchJudeg() {
+            if (getClientInfo() == "Pad") {
+                catchPosition.p1.catchx1 = -240;
+                catchPosition.p1.catchx2 = -136;
+                catchPosition.p2.catchx1 = -120;
+                catchPosition.p2.catchx2 = -50;
+                catchPosition.p3.catchx1 = -15;
+                catchPosition.p3.catchx2 = 50;
+                catchPosition.p4.catchx1 = 103;
+                catchPosition.p4.catchx2 = 146;
+                catchPosition.p5.catchx1 = 150;
+                catchPosition.p5.catchx2 = 224;
+            } else if (getClientInfo() == "PC") {
+                $("#rod").css({
+                    "width": "7px"
+                })
+                catchPosition.p1.catchx1 = -40;
+                catchPosition.p1.catchx2 = -24;
+                catchPosition.p2.catchx1 = -22;
+                catchPosition.p2.catchx2  = -14;
+                catchPosition.p3.catchx1 = -4;
+                catchPosition.p3.catchx2  = 10;
+                catchPosition.p4.catchx1 = 15;
+                catchPosition.p4.catchx2  = 25;
+                catchPosition.p5.catchx1 = 27;
+                catchPosition.p5.catchx2  = 45;
+            } else {
+                catchPosition.p1.catchx1 = -100;
+                catchPosition.p1.catchx2 = -50;
+                catchPosition.p2.catchx1 = -50;
+                catchPosition.p2.catchx2  = -36;
+                catchPosition.p3.catchx1 = -25;
+                catchPosition.p3.catchx2  = 30;
+                catchPosition.p4.catchx1 = 36;
+                catchPosition.p4.catchx2  = 50;
+                catchPosition.p5.catchx1 = 60;
+                catchPosition.p5.catchx2  = 100;
+            }
+        }
+        catchJudeg();
+        console.log(catchPosition)
         $("#start-btn").click(function() {
             $("#finger").hide();
-            startGame()
+            startGame(catchPosition)
         })
         $("#finger").click(function() {
             $("#finger").hide();
-            startGame()
+            startGame(catchPosition)
         })
-        function startGame() {
+        function startGame(p) {
             if (!flag) {
                 return;
             }
@@ -709,7 +772,7 @@
             if (mql.matches) {
                 dis = "22vh"
             } else {
-                dis = "27.6vh"
+                dis = "24.6vh"
             }
             $("#rod").animate({
                 height: dis
@@ -727,8 +790,7 @@
                 });
                 $("#finger").show();
             });
-
-            // -100~-50  -50~-37  -25~30  36~50 60~100
+            // -100~-50  -50~-36  -25~30  36~50 60~100
             // 娃娃抓取判断
             window.setTimeout(function() {
                 // 判断横竖屏下杆的伸缩长度
@@ -740,7 +802,7 @@
                     top2 = "-80%";
                 } 
                 // 抓取物判断
-                if ($("#hand").css("left").split("p")[0] > -100 && $("#hand").css("left").split("p")[0] < -48 && mark.mark1) {
+                if ($("#hand").css("left").split("p")[0] > p.p1.catchx1 && $("#hand").css("left").split("p")[0] < p.p1.catchx2 && mark.mark1) {
                     source += 100;
                     mark.mark1 = false;
                     $("#item9").animate({
@@ -768,7 +830,8 @@
                             }
                         }, 3000)
                     })
-                } else if ($("#hand").css("left").split("p")[0] > -25 && $("#hand").css("left").split("p")[0] < 30 && mark.mark2) {
+                } else if ($("#hand").css("left").split("p")[0] > p.p3.catchx1 && $("#hand").css("left").split("p")[0] < p.p3.catchx2 && mark.mark2) {
+                    console.log("123")
                     source += 100;
                     mark.mark2 = false;
                     $("#item7").animate({
@@ -796,7 +859,7 @@
                             }
                         }, 3000)
                     })
-                } else if ($("#hand").css("left").split("p")[0] > 60 && $("#hand").css("left").split("p")[0] < 100 && mark.mark3) {
+                } else if ($("#hand").css("left").split("p")[0] > p.p5.catchx1 && $("#hand").css("left").split("p")[0] < p.p5.catchx2 && mark.mark3) {
                     source += 100;
                     mark.mark3 = false;
                     $("#item15").animate({
@@ -824,7 +887,7 @@
                             }
                         }, 3000)
                     })
-                } else if ($("#hand").css("left").split("p")[0] > -50 && $("#hand").css("left").split("p")[0] < -36 && mark.mark4) {
+                } else if ($("#hand").css("left").split("p")[0] > p.p2.catchx1 && $("#hand").css("left").split("p")[0] < p.p2.catchx2 && mark.mark4) {
                     source += 100;
                     mark.mark4 = false;
                     $("#item8").animate({
@@ -852,7 +915,7 @@
                             }
                         }, 3000)
                     })
-                } else if ($("#hand").css("left").split("p")[0] > 36 && $("#hand").css("left").split("p")[0] < 50 && mark.mark5) {
+                } else if ($("#hand").css("left").split("p")[0] > p.p4.catchx1 && $("#hand").css("left").split("p")[0] < p.p4.catchx2 && mark.mark5) {
                     source += 100;
                     mark.mark5 = false;
                     $("#item13").animate({
@@ -1525,19 +1588,6 @@
         }
 
         checkReady();
-
-        function getClientInfo() {
-          var u = navigator.userAgent;
-          var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
-          var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-          if (isAndroid) {
-            return "Android";
-          } else if (isiOS) {
-            return "iOS"
-          } else {
-            return "PC";
-          }
-        }
 
         $("#reward").click(function(){
             openStore();
